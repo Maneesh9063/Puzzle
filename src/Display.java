@@ -40,17 +40,30 @@ class PuzzleDrawingComponent extends JComponent {
 	public PuzzleDrawingComponent() {
 
 		this.addMouseListener(new MouseListener() {
-
+			
+			/* Okay, so here's what I'm thinking:
+			 * When you click: selects the piece you want to drag.
+			 * When you're pressing the mouse down: dragging the piece to where your mouse is
+			 * When you release: Place the puzzle piece on the correct spot on the grid or bank, if it's not on the grid or bank then it will just put it back where it was
+			 * 
+			 * We need to know where the grid and bank are, which shouldn't be a problem. With that- we need to call place(..blah..) or remove(..blah..) appropriately depending on where the piece is.
+			 * That's all I'm doing for now... :)
+			 * 
+			 * We should also record where on the piece we clicked in the first place so we can drag on that position.
+			*/
 			@Override
 			public void mouseClicked(MouseEvent e) {
+				// Select piece
 			}
 
 			@Override
 			public void mousePressed(MouseEvent e) {
+				// Start dragging it
 			}
 
 			@Override
 			public void mouseReleased(MouseEvent e) {
+				// Put it down
 			}
 
 			@Override
