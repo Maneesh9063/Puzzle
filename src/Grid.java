@@ -28,11 +28,11 @@ public class Grid {
 	}
 	
 	public PuzzlePiece setCell(int x, int y, PuzzlePiece piece) {
-		return new PuzzlePiece();
+		return new PuzzlePiece(0, 0, 0, 0);
 	}
 	
 	public PuzzlePiece getCell(int x, int y) {
-		return new PuzzlePiece();
+		return new PuzzlePiece(0, 0, 0, 0);
 	}
 	
 	public void clear() {

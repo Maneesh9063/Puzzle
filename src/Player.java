@@ -26,7 +26,7 @@ public class Player {
 	}
 	
 	public Grid getGrid() {
-		
+		return new Grid(0, 0);
 	}
 	
 	public PuzzlePiece[] get$Bank() {
