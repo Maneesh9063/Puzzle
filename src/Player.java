@@ -16,5 +16,32 @@
  * 		returns true if a piece was removed
  */
 public class Player {
-
+	
+	public Player(Grid grid, PuzzlePiece[] pieces) {
+		
+	}
+	
+	public void solve() {
+		
+	}
+	
+	public Grid getGrid() {
+		
+	}
+	
+	public PuzzlePiece[] get$Bank() {
+		return new PuzzlePiece[9];
+	}
+	
+	public boolean canPlace(int x, int y, PuzzlePiece piece) {
+		return true;
+	}
+	
+	public boolean place(int x, int y, PuzzlePiece piece) {
+		return true;
+	}
+	
+	public boolean remove(int x, int y) {
+		return true;
+	}
 }

@@ -17,6 +17,45 @@
  * boolean isEmpty()
 
  */
-public class Grid {
 
+public class Grid {
+	public Grid(int length, int width) {
+		
+	}
+	
+	public boolean isValid(int x, int y) {
+		return true;
+	}
+	
+	public PuzzlePiece setCell(int x, int y, PuzzlePiece piece) {
+		return new PuzzlePiece();
+	}
+	
+	public PuzzlePiece getCell(int x, int y) {
+		return new PuzzlePiece();
+	}
+	
+	public void clear() {
+		
+	}
+	
+	public int getHeight() {
+		return 0;
+	}
+	
+	public int getWidth() {
+		return 0;
+	}
+	
+	public boolean isOccupied(int x, int y) {
+		return true;
+	}
+	
+	public boolean isFull() {
+		return false;
+	}
+	
+	public boolean isEmpty() {
+		return false;
+	}
 }
