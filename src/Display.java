@@ -6,14 +6,11 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
-import java.io.File;
-import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 
-import javax.imageio.ImageIO;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
-
 
 /**
  * Display.java
@@ -24,14 +21,25 @@ import javax.swing.JFrame;
  * 
  */
 public class Display {
+	
 	public static void main(String[] args) {
+		new Display();
+	}
+
+	/**
+	 * Creates a new Display, opening a window and doing everything.
+	 */
+	public Display() {
 		JFrame frame = new JFrame();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setSize(800, 800);
 		frame.setLocation(10, 10);
-		frame.add(new PuzzleDrawingComponent());
+		frame.add(new PuzzleDrawingComponent(this));
 		frame.setVisible(true);
+		
+		
 	}
+
 }
 
 /**
@@ -39,22 +47,33 @@ public class Display {
  * 
  */
 class PuzzleDrawingComponent extends JComponent {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7063163051251953145L;
 	private long lastTick = 0;
+	Display display;
 
-	public PuzzleDrawingComponent() {
-
+	public PuzzleDrawingComponent(Display display) {
+		this.display = display;
 		this.addMouseListener(new MouseListener() {
-			
-			/* Okay, so here's what I'm thinking:
-			 * When you click: selects the piece you want to drag.
-			 * When you're pressing the mouse down: dragging the piece to where your mouse is
-			 * When you release: Place the puzzle piece on the correct spot on the grid or bank, if it's not on the grid or bank then it will just put it back where it was
+
+			/*
+			 * Okay, so here's what I'm thinking: When you click: selects the
+			 * piece you want to drag. When you're pressing the mouse down:
+			 * dragging the piece to where your mouse is When you release: Place
+			 * the puzzle piece on the correct spot on the grid or bank, if it's
+			 * not on the grid or bank then it will just put it back where it
+			 * was
 			 * 
-			 * We need to know where the grid and bank are, which shouldn't be a problem. With that- we need to call place(..blah..) or remove(..blah..) appropriately depending on where the piece is.
+			 * We need to know where the grid and bank are, which shouldn't be a
+			 * problem. With that- we need to call place(..blah..) or
+			 * remove(..blah..) appropriately depending on where the piece is.
 			 * That's all I'm doing for now... :)
 			 * 
-			 * We should also record where on the piece we clicked in the first place so we can drag on that position.
-			*/
+			 * We should also record where on the piece we clicked in the first
+			 * place so we can drag on that position.
+			 */
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				// Select piece
@@ -109,12 +128,13 @@ class PuzzleDrawingComponent extends JComponent {
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 				RenderingHints.VALUE_ANTIALIAS_ON);
 		// EXAMPLE ON HOW TO DRAW AN IMAGE
-//		try {
-//			g.drawImage(ImageIO.read(new File("images/piece_1.png")), 0, 0, null);
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
+		// try {
+		// g.drawImage(ImageIO.read(new File("images/piece_1.png")), 0, 0,
+		// null);
+		// } catch (IOException e) {
+		// // TODO Auto-generated catch block
+		// e.printStackTrace();
+		// }
 		// Draw background
 
 		long currentTime = new Date().getTime();
