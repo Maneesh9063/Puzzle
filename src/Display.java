@@ -6,10 +6,14 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.io.File;
+import java.io.IOException;
 import java.util.Date;
 
+import javax.imageio.ImageIO;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+
 
 /**
  * Display.java
@@ -104,6 +108,13 @@ class PuzzleDrawingComponent extends JComponent {
 		// adds some anti-Aliasing
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 				RenderingHints.VALUE_ANTIALIAS_ON);
+		// EXAMPLE ON HOW TO DRAW AN IMAGE
+//		try {
+//			g.drawImage(ImageIO.read(new File("images/piece_1.png")), 0, 0, null);
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 		// Draw background
 
 		long currentTime = new Date().getTime();
