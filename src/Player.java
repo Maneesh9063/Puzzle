@@ -40,7 +40,7 @@ public class Player {
 	public boolean place(int x, int y, PuzzlePiece piece) {
 		return true;
 	}
-
+	
 	public boolean remove(int x, int y) {
 		return true;
 	}
