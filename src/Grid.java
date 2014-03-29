@@ -20,35 +20,39 @@
 
 public class Grid {
 	public Grid(int length, int width) {
-		
+		grid = new PuzzlePiece[length][width];
 	}
 	
 	public boolean isValid(int x, int y) {
+		if(x >= getWidth() || x < 0) return false;
+		if(y >= getHeight() || y < 0) return false;
+		if(isOccupied(x, y)) return false;
 		return true;
 	}
 	
 	public PuzzlePiece setCell(int x, int y, PuzzlePiece piece) {
+		grid[y][x] = piece;
 		return new PuzzlePiece(0, 0, 0, 0);
 	}
 	
 	public PuzzlePiece getCell(int x, int y) {
-		return new PuzzlePiece(0, 0, 0, 0);
+		return grid[y][x];
 	}
 	
 	public void clear() {
-		
+		grid = new PuzzlePiece[getHeight()][getWidth()];
 	}
 	
 	public int getHeight() {
-		return 0;
+		return grid.length;
 	}
 	
 	public int getWidth() {
-		return 0;
+		return grid[0].length;
 	}
 	
 	public boolean isOccupied(int x, int y) {
-		return true;
+		return (isValid(x, y) && grid[y][x] != null);
 	}
 	
 	public boolean isFull() {
@@ -58,4 +62,5 @@ public class Grid {
 	public boolean isEmpty() {
 		return false;
 	}
+	private PuzzlePiece grid[][];
 }

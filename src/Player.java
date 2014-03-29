@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 /*
  * variables
  * 	grid
@@ -18,11 +20,12 @@
 public class Player {
 	
 	public Player(Grid grid, PuzzlePiece[] pieces) {
-		
+		this.grid = grid;
+		this.pieces = pieces;
 	}
 	
 	public void solve() {
-		
+//		Random r = new Random(); // AND SO ON
 	}
 	
 	public Grid getGrid() {
@@ -38,10 +41,18 @@ public class Player {
 	}
 	
 	public boolean place(int x, int y, PuzzlePiece piece) {
+		grid.setCell(x, y, piece);
+		bank.remove(piece);
 		return true;
 	}
 	
 	public boolean remove(int x, int y) {
+		bank.add(grid.getCell(x, y));
+		grid.setCell(x, y, null);
 		return true;
 	}
+	
+	private Grid grid;
+	private PuzzlePiece[] pieces;
+	private ArrayList<PuzzlePiece> bank = new ArrayList<PuzzlePiece>();
 }

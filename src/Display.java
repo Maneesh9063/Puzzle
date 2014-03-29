@@ -75,7 +75,9 @@ public class Display {
 class PuzzleDrawingComponent extends JComponent {
 	private Display display;
 	private long lastTick = 0;
-
+	
+	// Fun fact: The images are sized 118 x 118 pixels. but they really only take up 70
+	
 	public PuzzleDrawingComponent(Display display) {
 		this.display = display;
 		this.addMouseListener(new MouseListener() {
@@ -132,10 +134,22 @@ class PuzzleDrawingComponent extends JComponent {
 		// adds some anti-Aliasing
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 				RenderingHints.VALUE_ANTIALIAS_ON);
-		for(int i = 0; i < pieceImages.length; i++) {
-			g.drawImage(pieceImages[i].getImage() , i * 50 , i * 50, null);
+		
+		// draw the pieces in the grid                                             (and/or)
+		// for testing this it would be soooo helpful to actually have a working grid&//player class
+		int imagespacing = 70;
+		for(int i = 0; i < player.getGrid().getHeight(); i++) {
+			for(int j = 0; j < player.getGrid().getWidth(); j++) {
+				g.drawImage(pieceImages[(i+1)*(j+1)].getImage(), j*imagespacing, i*imagespacing, null);
+			}
 		}
-
+		for(int i = 0; i < player.get$Bank().length; i++) {
+			g.drawImage(pieceImages[i].getImage(), i*imagespacing, 400, null);
+		}
+		
+		// draw the pieces in the bank
+		
+		
 		// Draw background
 
 		long currentTime = new Date().getTime();
