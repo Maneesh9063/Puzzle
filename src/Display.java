@@ -53,6 +53,8 @@ public class Display {
 		}
 		player = new Player(new Grid(3, 3), pieces);
 		player.place(0, 0, pieces[0]);
+		player.place(1, 1, pieces[1]);
+		player.place(2, 2, pieces[2]);
 		JFrame frame = new JFrame("Puzzle");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setSize(800, 800);
@@ -141,8 +143,8 @@ class PuzzleDrawingComponent extends JComponent {
 		for(int i = 0; i < player.getGrid().getHeight(); i++) {
 			for(int j = 0; j < player.getGrid().getWidth(); j++) {
 				if(player.getGrid().isOccupied(j, i))
-				g.drawImage(pieces[counter].getImage(), this.getWidth() / 2 + ((j - 1) * imagespacing) + j*imagespacing, 
-						this.getHeight() / 2 + ((i - 1) * imagespacing) + i*imagespacing, null);
+				g.drawImage(pieces[counter].getImage(), this.getWidth() / 2 + j*imagespacing - (int)(imagespacing*1.5), 
+						this.getHeight() / 2 + i*imagespacing - 100 - (int)(imagespacing*1.5), null);
 				counter++;
 			}
 		}
