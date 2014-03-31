@@ -52,15 +52,29 @@ public class Grid {
 	}
 	
 	public boolean isOccupied(int x, int y) {
-		return (isValid(x, y) && grid[y][x] != null);
+		if(x >= getWidth() || x < 0) return false;
+		if(y >= getHeight() || y < 0) return false;
+		return grid[y][x] != null;
 	}
 	
 	public boolean isFull() {
-		return false;
+		for(int i =0;i < grid.length; i++)
+		{
+			for(int j = 0; j< grid[i].length; j++)
+				if(grid[i][j] == null)
+					return false;
+		}
+		return true;
 	}
 	
 	public boolean isEmpty() {
-		return false;
+		for(int i =0;i < grid.length; i++)
+		{
+			for(int j = 0; j< grid[i].length; j++)
+				if(!(grid[i][j] == null))
+					return false;
+		}
+		return true;
 	}
 	private PuzzlePiece grid[][];
 }

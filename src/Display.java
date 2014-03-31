@@ -7,7 +7,6 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.util.Date;
-
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 
@@ -21,7 +20,7 @@ import javax.swing.JFrame;
  */
 public class Display {
 	protected Player player;
-	protected PuzzlePieceImage[] pieceImages;
+	protected PuzzlePieceImage[] pieces;
 	
 	public Display() {
 		PuzzlePiece[] puzzlePieces = {
@@ -47,13 +46,13 @@ public class Display {
 						PuzzlePiece.SPADES_IN, PuzzlePiece.HEARTS_IN),
 				new PuzzlePiece(PuzzlePiece.DIAMONDS_OUT,
 						PuzzlePiece.CLUBS_OUT, PuzzlePiece.CLUBS_IN,
-						PuzzlePiece.DIAMONDS_IN) };
-		pieceImages = new PuzzlePieceImage[puzzlePieces.length];
+						PuzzlePiece.DIAMONDS_IN)};
+		pieces = new PuzzlePieceImage[puzzlePieces.length];
 		for(int i = 0; i < puzzlePieces.length; i++) {
-			pieceImages[i] = new PuzzlePieceImage("images/piece_" + (i+1) + ".png", new Vector2(), 0, puzzlePieces[i]);
+			pieces[i] = new PuzzlePieceImage("images/piece_" + (i+1) + ".png", new Vector2(), 0, puzzlePieces[i]);
 		}
-		player = new Player(new Grid(3, 3), puzzlePieces);
-
+		player = new Player(new Grid(3, 3), pieces);
+		player.place(0, 0, pieces[0]);
 		JFrame frame = new JFrame("Puzzle");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setSize(800, 800);
@@ -138,13 +137,17 @@ class PuzzleDrawingComponent extends JComponent {
 		// draw the pieces in the grid                                             (and/or)
 		// for testing this it would be soooo helpful to actually have a working grid&//player class
 		int imagespacing = 70;
+		int counter = 0;
 		for(int i = 0; i < player.getGrid().getHeight(); i++) {
 			for(int j = 0; j < player.getGrid().getWidth(); j++) {
-				g.drawImage(pieceImages[(i+1)*(j+1)].getImage(), j*imagespacing, i*imagespacing, null);
+				if(player.getGrid().isOccupied(j, i))
+				g.drawImage(pieces[counter].getImage(), this.getWidth() / 2 + ((j - 1) * imagespacing) + j*imagespacing, 
+						this.getHeight() / 2 + ((i - 1) * imagespacing) + i*imagespacing, null);
+				counter++;
 			}
 		}
 		for(int i = 0; i < player.get$Bank().length; i++) {
-			g.drawImage(pieceImages[i].getImage(), i*imagespacing, 400, null);
+			g.drawImage(((PuzzlePieceImage) player.get$Bank()[i]).getImage(), i*imagespacing, this.getHeight() / 2 + 218, null);
 		}
 		
 		// draw the pieces in the bank
