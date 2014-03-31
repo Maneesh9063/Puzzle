@@ -140,6 +140,18 @@ class PuzzleDrawingComponent extends JComponent {
 		// for testing this it would be soooo helpful to actually have a working grid&//player class
 		int imagespacing = 70;
 		int counter = 0;
+		
+		// The height of the lower line definitely isn't correct, but it's close.
+		g.drawLine(this.getWidth() / 2 - (int)(imagespacing*1.5), this.getHeight()/2 - 100 - (int)(imagespacing*1.5), 
+				this.getWidth() / 2 - (int)(imagespacing*1.5), this.getHeight()/2 - 100 + imagespacing*2);
+		g.drawLine(this.getWidth() / 2 - (int)(imagespacing*1.5) + imagespacing*2 + 118, this.getHeight()/2 - 100 - (int)(imagespacing*1.5), 
+				this.getWidth() / 2 - (int)(imagespacing*1.5) + imagespacing*2 + 118, this.getHeight()/2 - 100 + imagespacing*2);
+		g.drawLine(this.getWidth() / 2 - (int)(imagespacing*1.5), this.getHeight() / 2 - 100 - (int)(imagespacing*1.5),
+				this.getWidth() / 2 - (int)(imagespacing*1.5) + imagespacing*2 + 118, this.getHeight() / 2 - 100 - (int)(imagespacing*1.5));
+		g.drawLine(this.getWidth() / 2 - (int)(imagespacing*1.5), this.getHeight() / 2 - 100 + imagespacing*2,
+				this.getWidth() / 2 - (int)(imagespacing*1.5) + imagespacing*2 + 118, this.getHeight() / 2 - 100 + imagespacing*2);
+		
+		
 		for(int i = 0; i < player.getGrid().getHeight(); i++) {
 			for(int j = 0; j < player.getGrid().getWidth(); j++) {
 				if(player.getGrid().isOccupied(j, i))
@@ -149,7 +161,7 @@ class PuzzleDrawingComponent extends JComponent {
 			}
 		}
 		for(int i = 0; i < player.get$Bank().length; i++) {
-			g.drawImage(((PuzzlePieceImage) player.get$Bank()[i]).getImage(), i*imagespacing, this.getHeight() / 2 + 218, null);
+			g.drawImage(((PuzzlePieceImage) player.get$Bank()[i]).getImage(), i*imagespacing, this.getHeight() / 2 + 100, null);
 		}
 		
 		// draw the pieces in the bank
