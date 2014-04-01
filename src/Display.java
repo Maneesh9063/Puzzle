@@ -52,9 +52,11 @@ public class Display {
 			pieces[i] = new PuzzlePieceImage("images/piece_" + (i+1) + ".png", new Vector2(), 0, puzzlePieces[i]);
 		}
 		player = new Player(new Grid(3, 3), pieces);
-		player.place(0, 0, pieces[0]);
-		player.place(1, 1, pieces[1]);
-		player.place(2, 2, pieces[2]);
+		player.get$Bank();
+		player.get$Bank()[0].rotate(); // currently does not display rotations
+		player.place(0, 0, player.get$Bank()[0]);
+		player.place(1, 1, player.get$Bank()[1]);
+		player.place(2, 2, player.get$Bank()[2]);
 		JFrame frame = new JFrame("Puzzle");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setSize(800, 800);
@@ -143,13 +145,13 @@ class PuzzleDrawingComponent extends JComponent {
 		
 		// The height of the lower line definitely isn't correct, but it's close.
 		g.drawLine(this.getWidth() / 2 - (int)(imagespacing*1.5), this.getHeight()/2 - 100 - (int)(imagespacing*1.5), 
-				this.getWidth() / 2 - (int)(imagespacing*1.5), this.getHeight()/2 - 100 + imagespacing*2);
+				this.getWidth() / 2 - (int)(imagespacing*1.5), this.getHeight()/2 - imagespacing + 118);
 		g.drawLine(this.getWidth() / 2 - (int)(imagespacing*1.5) + imagespacing*2 + 118, this.getHeight()/2 - 100 - (int)(imagespacing*1.5), 
-				this.getWidth() / 2 - (int)(imagespacing*1.5) + imagespacing*2 + 118, this.getHeight()/2 - 100 + imagespacing*2);
+				this.getWidth() / 2 - (int)(imagespacing*1.5) + imagespacing*2 + 118, this.getHeight()/2 - imagespacing + 118);
 		g.drawLine(this.getWidth() / 2 - (int)(imagespacing*1.5), this.getHeight() / 2 - 100 - (int)(imagespacing*1.5),
 				this.getWidth() / 2 - (int)(imagespacing*1.5) + imagespacing*2 + 118, this.getHeight() / 2 - 100 - (int)(imagespacing*1.5));
-		g.drawLine(this.getWidth() / 2 - (int)(imagespacing*1.5), this.getHeight() / 2 - 100 + imagespacing*2,
-				this.getWidth() / 2 - (int)(imagespacing*1.5) + imagespacing*2 + 118, this.getHeight() / 2 - 100 + imagespacing*2);
+		g.drawLine(this.getWidth() / 2 - (int)(imagespacing*1.5), this.getHeight() / 2 - imagespacing + 118,
+				this.getWidth() / 2 - (int)(imagespacing*1.5) + imagespacing*2 + 118, this.getHeight() / 2 - imagespacing + 118);
 		
 		
 		for(int i = 0; i < player.getGrid().getHeight(); i++) {
