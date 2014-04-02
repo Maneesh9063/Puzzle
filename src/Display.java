@@ -94,10 +94,8 @@ class PuzzleDrawingComponent extends JComponent {
 			public void mousePressed(MouseEvent e) {
 				for(int i =0; i<pieces.length && p == null; i++)
 				{
-				int oldX = e.getX();
-				int oldY = e.getY();
-				if(oldX < pieces[i].getPosition().getX() + 70
-						&& oldY < pieces[i].getPosition().getY() +70) //70 = image spacing
+				if(e.getX() < pieces[i].getPosition().getX() +35 || e.getX() >pieces[i].getPosition().getX() -35
+						&& e.getY() < pieces[i].getPosition().getY() + 35 || e.getY() > pieces[i].getPosition().getY() -35) //70 = image spacing
 					p=pieces[i];
 					System.out.println(p.getPosition());
 				}			
