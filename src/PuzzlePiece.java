@@ -27,10 +27,9 @@ public class PuzzlePiece {
 		this.north = north;
 		this.east = east;
 		this.south = south;
-		System.out.println(west);
 		this.west = west;
 	}
-
+	
 	public void rotate() {
 		int temp = this.north;
 		this.north = this.west;

@@ -78,7 +78,7 @@ public class Display {
 class PuzzleDrawingComponent extends JComponent {
 	private Display display;
 	private long lastTick = 0;
-	private PuzzlePiece p;
+	private PuzzlePieceImage p;
 	
 	// Fun fact: The images are sized 118 x 118 pixels. but they really only take up 70
 	
@@ -88,12 +88,19 @@ class PuzzleDrawingComponent extends JComponent {
 			@Override
 			
 			public void mouseClicked(MouseEvent e) {
-				
 			}
 
 			@Override
 			public void mousePressed(MouseEvent e) {
-				// Start dragging it
+				for(int i =0; i<pieces.length && p == null; i++)
+				{
+				int oldX = e.getX();
+				int oldY = e.getY();
+				if(oldX < pieces[i].getPosition().getX() + 70
+						&& oldY < pieces[i].getPosition().getY() +70) //70 = image spacing
+					p=pieces[i];
+					System.out.println(p.getPosition());
+				}			
 			}
 
 			@Override
@@ -111,10 +118,10 @@ class PuzzleDrawingComponent extends JComponent {
 
 		});
 		this.addMouseMotionListener(new MouseMotionListener() {
-
 			@Override
 			public void mouseDragged(MouseEvent e) {
-				
+				if(p != null)
+				p.getPosition().set(e.getX(), e.getY());
 			}
 
 			@Override
@@ -125,7 +132,7 @@ class PuzzleDrawingComponent extends JComponent {
 		this.addMouseWheelListener(new MouseWheelListener() {
 			@Override
 			public void mouseWheelMoved(MouseWheelEvent e) {
-				if(e.getScrollType() == MouseWheelEvent.WHEEL_UNIT_SCROLL && p!= null))
+				if(e.getScrollType() == MouseWheelEvent.WHEEL_UNIT_SCROLL && p!= null)
 				{
 					p.rotate();
 				}
@@ -181,6 +188,8 @@ class PuzzleDrawingComponent extends JComponent {
 		long currentTime = new Date().getTime();
 		double timeElapsed = (lastTick == 0 ? 0 : (currentTime - lastTick)) * 0.001;
 		lastTick = currentTime;
+		if(p!= null)
+		System.out.println(p.getPosition());
 		this.repaint();
 	}
 }
