@@ -55,11 +55,11 @@ public class Display {
 					puzzlePieces[i]);
 		}
 		player = new Player(new Grid(3, 3), pieces);
-		player.get$Bank();
-		player.get$Bank()[0].rotate(); // currently does not display rotations
-		player.place(0, 0, player.get$Bank()[0]);
-		player.place(1, 1, player.get$Bank()[1]);
-		player.place(2, 2, player.get$Bank()[2]);
+//		player.get$Bank();
+//		player.get$Bank()[0].rotate(); // currently does not display rotations
+//		player.place(0, 0, player.get$Bank()[0]);
+//		player.place(1, 1, player.get$Bank()[1]);
+//		player.place(2, 2, player.get$Bank()[2]);
 		JFrame frame = new JFrame("Puzzle");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setSize(800, 800);
@@ -120,15 +120,21 @@ public class Display {
 
 		public PuzzleDrawingComponent(Display display) {
 			this.display = display;
+			
 			this.addMouseListener(new MouseListener() {
 				@Override
 				public void mouseClicked(MouseEvent e) {
 				}
-
+				int originalX;
+				int originalY;
+				boolean startedOnBank = false;
+				int bankX;
 				@Override
 				public void mousePressed(MouseEvent e) {
 					int currentX = e.getX() - width / 2;
 					int currentY = e.getY() - height / 2;
+					
+					
 					double minDistance = Double.POSITIVE_INFINITY;
 					for (int i = 0; i < pieces.length; i++) {
 						double distance = Math.max(
@@ -141,10 +147,43 @@ public class Display {
 							p = pieces[i];
 						}
 					}
+					
+					originalX = (int) Math.round(p.getPosition().getX() / 70) + 1;
+					originalY = (int) Math.round(p.getPosition().getY() / 70) + 2;
+					
+					if(originalY == 4) { // if the piece you  picked up is in the bank, then onBank is true, otherwise it's false :(
+						startedOnBank = true;
+					} else {
+						startedOnBank = false;
+					}
 				}
-
+				
 				@Override
 				public void mouseReleased(MouseEvent e) {
+					int releaseX = (int) Math.round(p.getPosition().getX() / 70) + 1;
+					int releaseY = (int) Math.round(p.getPosition().getY() / 70) + 2;
+					bankX = releaseX + 5; // if you're plopping it in the bank you'll need to know where to put it :) - this provides an index of where you're placing it
+					boolean onGrid; // keeps track of whether or not you're dropping onto the grid, as well as simplifying the impending series of if statements
+					
+					if(releaseY >= 0 && releaseY < player.getGrid().getHeight() && releaseX >= 0 && releaseX < player.getGrid().getWidth()) onGrid = true;
+					else onGrid = false;
+					
+					// if the piece you had picked up was in the bank, you can place it where you dropped it
+					if(startedOnBank) {
+						if(player.canPlace(releaseX, releaseY, p)) {
+							player.place(releaseX, releaseY, p);
+						}
+					} else { // otherwise, if you try to put it in the grid and it's in the grid already, you have to remove it from the grid, and replace it where you want
+						if(onGrid) {
+							if(player.canPlace(releaseX, releaseY, p)) {
+								player.remove(originalX, originalY);
+							player.place(releaseX, releaseY, p);
+							}
+						} else if(releaseY == 4) { // if you're putting it in the bank then IT WILL DO IT
+							player.remove(originalX, originalY);
+						}
+					}
+					
 					p = null;
 					needsRelayout=true;
 				}
