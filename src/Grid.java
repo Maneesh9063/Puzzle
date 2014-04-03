@@ -54,7 +54,7 @@ public class Grid {
 	public boolean isOccupied(int x, int y) {
 		if(x >= getWidth() || x < 0) return false;
 		if(y >= getHeight() || y < 0) return false;
-		return grid[y][x] != null;
+		return (getCell(x,y) != null);
 	}
 	
 	public boolean isFull() {
