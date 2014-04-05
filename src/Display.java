@@ -1,15 +1,27 @@
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.Date;
 
+import javax.imageio.ImageIO;
+import javax.swing.Icon;
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 /**
  * Display.java
@@ -65,10 +77,51 @@ public class Display {
 		frame.setSize(800, 800);
 		frame.setLocation(10, 10);
 		frame.add(new PuzzleDrawingComponent(this));
+		frame.add(panel(), BorderLayout.SOUTH);
 		frame.setVisible(true);
 
 	}
+	
+	// Creates a panel with buttons on it
+	private JPanel panel() {
+		JPanel panel = new JPanel();
+		JButton solve = new JButton("Solve");
+		class A implements ActionListener {
+			public void actionPerformed(ActionEvent e) {
+				player.solve();
+				
+			}
+		}
+		ActionListener a = new A();
+		solve.addActionListener(a);
+		solve.setPreferredSize(new Dimension(400, 100));
+		// I did this part for fun
+		solve.setIcon(new Icon(){
 
+			public int getIconHeight() {
+				return 100;
+			}
+
+			public int getIconWidth() {
+				return 400;
+			}
+
+			public void paintIcon(Component arg0, Graphics arg1, int arg2,int arg3) {
+				Graphics2D g = (Graphics2D) arg1;
+				BufferedImage image;
+				try {
+					image = ImageIO.read(new File("images/solveButton.png"));
+					g.drawImage(image, 0, 0, null);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				
+			}});
+
+		panel.add(solve);
+		return panel;
+	}
+	
 	public static void main(String[] args) {
 		new Display();
 	}
@@ -134,7 +187,6 @@ public class Display {
 					int currentX = e.getX() - width / 2;
 					int currentY = e.getY() - height / 2;
 					
-					
 					double minDistance = Double.POSITIVE_INFINITY;
 					for (int i = 0; i < pieces.length; i++) {
 						double distance = Math.max(
@@ -177,7 +229,7 @@ public class Display {
 						if(onGrid) {
 							if(player.canPlace(releaseX, releaseY, p)) {
 								player.remove(originalX, originalY);
-							player.place(releaseX, releaseY, p);
+								player.place(releaseX, releaseY, p);
 							}
 						} else if(releaseY == 4) { // if you're putting it in the bank then IT WILL DO IT
 							player.remove(originalX, originalY);
