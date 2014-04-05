@@ -89,7 +89,6 @@ public class Display {
 		class A implements ActionListener {
 			public void actionPerformed(ActionEvent e) {
 				player.solve();
-				
 			}
 		}
 		ActionListener a = new A();
@@ -267,7 +266,12 @@ public class Display {
 				public void mouseWheelMoved(MouseWheelEvent e) {
 					if (e.getScrollType() == MouseWheelEvent.WHEEL_UNIT_SCROLL
 							&& p != null) {
-						p.rotate();
+						if(e.getPreciseWheelRotation() == -1) {
+							p.rotate();
+						} else if(e.getPreciseWheelRotation() == 1) {
+							p.rotateTheWayOppositeOfTheOtherRotateMethod();
+						}
+						
 					}
 				}
 			});

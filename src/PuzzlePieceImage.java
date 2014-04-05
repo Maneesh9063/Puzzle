@@ -39,6 +39,17 @@ public class PuzzlePieceImage extends PuzzlePiece {
 		image = op.filter(image,null);
 		
 	}
+	
+	public void rotateTheWayOppositeOfTheOtherRotateMethod() {
+		super.rotateTheWayOppositeOfTheOtherRotateMethod();
+		AffineTransform tx = new AffineTransform();
+		int w = image.getWidth();
+		int h = image.getHeight();
+		double angle = Math.PI/2;
+		tx.rotate(-angle, w/2, h/2);
+		AffineTransformOp op = new AffineTransformOp(tx,AffineTransformOp.TYPE_BILINEAR);
+		image = op.filter(image,null);
+	}
 	// returns the rotation of the image (not necessarily the piece)
 	public int getRotation() {
 		return rotation;
