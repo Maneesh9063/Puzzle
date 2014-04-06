@@ -268,15 +268,17 @@ public class Display {
 							&& p != null) {
 						if(e.getPreciseWheelRotation() == -1) {
 							p.rotate();
+							changed = p;
 						} else if(e.getPreciseWheelRotation() == 1) {
 							p.rotateTheWayOppositeOfTheOtherRotateMethod();
+							changed = p;
 						}
 						
 					}
 				}
 			});
 		}
-
+		private PuzzlePiece changed = null; // to be used l8r, keeps track of the puzzle piece you just rotated
 		/**
 		 * @param graphics
 		 *            the graphics context
@@ -298,6 +300,14 @@ public class Display {
 			for (int i = 0; i < player.getGrid().getHeight(); i++) {
 				for (int j = 0; j < player.getGrid().getWidth(); j++) {
 					if (player.getGrid().isOccupied(i, j)) {
+						if(changed!= null) {
+							if(player.getGrid().getCell(i, j).equals(changed)) {
+								player.remove(i, j);
+								if(player.canPlace(i, j, changed)) {
+									player.place(i, j, changed);
+								}
+							}
+						}
 						if (needsRelayout) {
 							relayout((PuzzlePieceImage) player.getGrid()
 									.getCell(i, j), i - 1, 2 - j);
