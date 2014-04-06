@@ -89,6 +89,7 @@ public class Display {
 		class A implements ActionListener {
 			public void actionPerformed(ActionEvent e) {
 				player.solve();
+				needsRelayout = true;
 			}
 		}
 		ActionListener a = new A();
@@ -96,15 +97,12 @@ public class Display {
 		solve.setPreferredSize(new Dimension(400, 100));
 		// I did this part for fun
 		solve.setIcon(new Icon(){
-
 			public int getIconHeight() {
 				return 100;
 			}
-
 			public int getIconWidth() {
 				return 400;
 			}
-
 			public void paintIcon(Component arg0, Graphics arg1, int arg2,int arg3) {
 				Graphics2D g = (Graphics2D) arg1;
 				BufferedImage image;
@@ -114,13 +112,12 @@ public class Display {
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-				
 			}});
 
 		panel.add(solve);
 		return panel;
 	}
-	
+	private boolean needsRelayout = true;
 	public static void main(String[] args) {
 		new Display();
 	}
@@ -148,7 +145,7 @@ public class Display {
 										// the bank
 		private int selectionDistance = 59; // How far away to select the piece
 
-		public boolean needsRelayout = true;
+		
 
 		// +------+ = gridPadding
 		// |XXXXXX|
