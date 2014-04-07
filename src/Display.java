@@ -115,6 +115,40 @@ public class Display {
 			}});
 
 		panel.add(solve);
+		
+		JButton clear = new JButton("Clear");
+		class ClearListener implements ActionListener {
+			public void actionPerformed(ActionEvent e) {
+				for(int i = 0; i<player.getGrid().getHeight(); i++)
+					for(int j = 0; j<player.getGrid().getWidth(); j++)
+						if(player.getGrid().getCell(j,i) != null)
+							player.remove(j,i);
+				needsRelayout = true;
+			}
+		}
+		ActionListener clearListener = new ClearListener();
+		clear.addActionListener(clearListener);
+		clear.setPreferredSize(new Dimension(400, 100));
+		// I did this part for fun
+		clear.setIcon(new Icon(){
+			public int getIconHeight() {
+				return 100;
+			}
+			public int getIconWidth() {
+				return 400;
+			}
+			public void paintIcon(Component arg0, Graphics arg1, int arg2,int arg3) {
+				Graphics2D g = (Graphics2D) arg1;
+				BufferedImage image;
+				try {
+					image = ImageIO.read(new File("images/clear.png"));
+					g.drawImage(image, 0, 0, null);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}});
+
+		panel.add(clear);
 		return panel;
 	}
 	private boolean needsRelayout = true;
@@ -293,7 +327,7 @@ public class Display {
 			// working grid&//player class
 			width = this.getWidth();
 			height = this.getHeight();
-
+			
 			for (int i = 0; i < player.getGrid().getHeight(); i++) {
 				for (int j = 0; j < player.getGrid().getWidth(); j++) {
 					if (player.getGrid().isOccupied(i, j)) {
