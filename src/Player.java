@@ -31,7 +31,6 @@ public class Player {
 				if(grid.getCell(j,i) != null)
 					remove(j,i);
 		return solveh();
-		
 	}
 	public boolean solveh() {
 		if (grid.isFull())
