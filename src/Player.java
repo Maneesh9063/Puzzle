@@ -25,15 +25,22 @@ public class Player {
 		for (int i = 0; i < pieces.length; i++)
 			bank.add(pieces[i]);
 	}
-
-	public boolean solve() {
+	public boolean solve(){
+		for(int i = 0; i<grid.getHeight(); i++)
+			for(int j = 0; j< grid.getWidth(); j++)
+				if(grid.getCell(j,i) != null)
+					remove(j,i);
+		return solveh();
+		
+	}
+	public boolean solveh() {
 		if (grid.isFull())
 			return true;
 		for (int i = bank.size() - 1; i > -1; i--) {
 			for (int j = 0; j < 4; j++) {
 				bank.get(i).rotate();
 				if (place(nextSpot()[0], nextSpot()[1], bank.get(i))) {
-					solve();
+					solveh();
 					if (grid.isFull())
 						return true;
 					bank.add(i, grid.getCell(lastPlaced()[0], lastPlaced()[1]));
