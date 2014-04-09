@@ -1,5 +1,7 @@
+import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -76,6 +78,7 @@ public class Display {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setSize(1200, 800);
 		frame.setLocation(10, 10);
+		frame.setResizeable(false);
 		frame.add(new PuzzleDrawingComponent(this));
 		frame.add(panel(), BorderLayout.SOUTH);
 		frame.setVisible(true);
@@ -327,6 +330,14 @@ public class Display {
 			// working grid&//player class
 			width = this.getWidth();
 			height = this.getHeight();
+	
+			//Draw a Box around the grid. This is alllll hardcoded but I think its needed in some form
+			g.setStroke(new BasicStroke(3));
+			g.setColor(Color.BLUE);
+			g.drawLine(width/2 - 70*3/2,height/5*2-3-70*3/2 ,width/2+70*3/2,height/5*2-3-70*3/2);
+			g.drawLine(width/2 - 70*3/2,height/5*2-3-70*3/2 ,width/2-70*3/2,height/5*2-3+70*3/2);
+			g.drawLine(width/2-70*3/2,height/5*2-3+70*3/2 ,width/2+70*3/2,height/5*2-3+70*3/2);
+			g.drawLine(width/2+70*3/2,height/5*2-3+70*3/2 ,width/2+70*3/2,height/5*2-3-70*3/2);
 			
 			for (int i = 0; i < player.getGrid().getHeight(); i++) {
 				for (int j = 0; j < player.getGrid().getWidth(); j++) {
