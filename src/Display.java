@@ -74,7 +74,7 @@ public class Display {
 //		player.place(2, 2, player.get$Bank()[2]);
 		JFrame frame = new JFrame("Puzzle");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setSize(800, 800);
+		frame.setSize(1200, 800);
 		frame.setLocation(10, 10);
 		frame.add(new PuzzleDrawingComponent(this));
 		frame.add(panel(), BorderLayout.SOUTH);
@@ -114,7 +114,7 @@ public class Display {
 				}
 			}});
 
-		panel.add(solve);
+		
 		
 		JButton clear = new JButton("Clear");
 		class ClearListener implements ActionListener {
@@ -147,8 +147,8 @@ public class Display {
 					e.printStackTrace();
 				}
 			}});
-
 		panel.add(clear);
+		panel.add(solve);
 		return panel;
 	}
 	private boolean needsRelayout = true;
