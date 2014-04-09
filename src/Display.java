@@ -78,11 +78,17 @@ public class Display {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setSize(1200, 800);
 		frame.setLocation(10, 10);
-		frame.setResizeable(false);
+		frame.setResizable(false);
 		frame.add(new PuzzleDrawingComponent(this));
 		frame.add(panel(), BorderLayout.SOUTH);
 		frame.setVisible(true);
-
+		BufferedImage icon;
+		try {
+			icon = ImageIO.read(new File("images/piece_1.png"));
+			frame.setIconImage(icon);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	// Creates a panel with buttons on it
