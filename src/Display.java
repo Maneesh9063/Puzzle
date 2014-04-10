@@ -36,6 +36,8 @@ import javax.swing.JPanel;
 public class Display {
 	protected Player player;
 	protected PuzzlePieceImage[] pieces;
+	private boolean needsRelayout = true;
+	private long lastTick = 0;
 
 	public Display() {
 		PuzzlePiece[] puzzlePieces = {
@@ -100,6 +102,7 @@ public class Display {
 			public void actionPerformed(ActionEvent e) {
 				player.solve();
 				needsRelayout = true;
+				lastTick = 0;
 			}
 		}
 		ActionListener a = new A();
@@ -168,8 +171,6 @@ public class Display {
 		return panel;
 	}
 
-	private boolean needsRelayout = true;
-
 	public static void main(String[] args) {
 		new Display();
 	}
@@ -183,7 +184,6 @@ public class Display {
 		 * 
 		 */
 		private static final long serialVersionUID = -934843960429454280L;
-		private long lastTick = 0;
 		private int width = 0;
 		private int height = 0;
 		private Vector2 tempV2 = new Vector2();
@@ -204,6 +204,10 @@ public class Display {
 		private final int selectionDistance = 59; // How far away to select the
 													// piece
 		private final int indicatorWidth = 10;
+		private final double transitionDuration = 2;
+		private PuzzlePiece changed = null; // to be used l8r, keeps track of
+
+		// the puzzle piece you just rotated
 
 		// Fun fact: The images are sized 118 x 118 pixels. but they really only
 		// take up 70
@@ -237,6 +241,9 @@ public class Display {
 					if (minDistance > selectionDistance) {
 						selectedPiece = null;
 					} else {
+						selectedPiece.setTransition(1);
+						selectedPiece.getTarget().copy(
+								selectedPiece.getPosition());
 						selectedOnGrid = -1;
 						// Compute possible board locations
 						for (int i = 0; i < 9; i++) {
@@ -260,7 +267,6 @@ public class Display {
 						}
 						selectedToGrid = selectedOnGrid >= 0;
 					}
-					needsRelayout = true;
 				}
 
 				@Override
@@ -319,7 +325,8 @@ public class Display {
 						deltaPos.set(e.getX() - width / 2,
 								e.getY() - height / 2).subtract(mousePosition);
 						mousePosition.add(deltaPos);
-						selectedPiece.getPosition().add(deltaPos);
+						selectedPiece.setTransition(1);
+						selectedPiece.getTarget().add(deltaPos);
 						selectedToGrid = selectedPiece.getPosition().length() < bankRadius;
 					}
 				}
@@ -348,9 +355,6 @@ public class Display {
 			});
 		}
 
-		private PuzzlePiece changed = null; // to be used l8r, keeps track of
-											// the puzzle piece you just rotated
-
 		/**
 		 * @param graphics
 		 *            the graphics context
@@ -362,6 +366,11 @@ public class Display {
 			// adds some anti-Aliasing
 			g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 					RenderingHints.VALUE_ANTIALIAS_ON);
+
+			// Time!
+			long currentTime = new Date().getTime();
+			double timeElapsed = (lastTick == 0 ? 0 : (currentTime - lastTick)) * 0.001;
+			lastTick = currentTime;
 
 			// draw the pieces in the grid (and/or)
 			// for testing this it would be soooo helpful to actually have a
@@ -410,9 +419,11 @@ public class Display {
 							}
 						}
 						if (needsRelayout) {
-							relayout(
-									((PuzzlePieceImage) (player.getGrid().getCell(
-											i, j))).getPosition(), i + 3 * j);
+							PuzzlePieceImage piece = (PuzzlePieceImage) player
+									.getGrid().getCell(i, j);
+							piece.setTransition(0);
+							piece.getSource().copy(piece.getPosition());
+							relayout(piece.getTarget(), i + 3 * j);
 						}
 					}
 				}
@@ -420,26 +431,32 @@ public class Display {
 			for (int i = 0; i < player.get$Bank().length; i++) {
 				if (player.get$Bank()[i] != null) {
 					if (needsRelayout) {
-						relayout(
-								((PuzzlePieceImage) (player.get$Bank()[i]))
-										.getPosition(),
-								i, player.get$Bank().length);
+						PuzzlePieceImage piece = (PuzzlePieceImage) player
+								.get$Bank()[i];
+						piece.setTransition(0);
+						piece.getSource().copy(piece.getPosition());
+						relayout(piece.getTarget(), i, player.get$Bank().length);
 					}
 				}
 			}
+			needsRelayout = false;
+			// Animation
 			for (int i = 0; i < pieces.length; i++) {
-				drawPiece((PuzzlePieceImage) pieces[i], g);
+				PuzzlePieceImage piece = (PuzzlePieceImage) pieces[i];
+				if (piece.getTransition() < 1) {
+					piece.setTransition(Math.min(piece.getTransition()
+							+ timeElapsed / transitionDuration, 1));
+					piece.getPosition()
+							.copy(piece.getSource())
+							.lerp(piece.getTarget(),
+									1 - Math.pow(0.2, 10 * piece.getTransition()));
+				} else {
+					piece.getPosition().copy(piece.getTarget());
+				}
+				// draw the pieces in the bank
+				drawPiece(piece, g);
 			}
 
-			needsRelayout = false;
-
-			// draw the pieces in the bank
-
-			// Draw background
-
-			long currentTime = new Date().getTime();
-			double timeElapsed = (lastTick == 0 ? 0 : (currentTime - lastTick)) * 0.001;
-			lastTick = currentTime;
 			this.repaint();
 		}
 
