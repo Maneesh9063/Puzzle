@@ -23,13 +23,14 @@ public class PuzzlePiece {
 	public static final int WEST = 270;
 
 	private int north, east, south, west;
+
 	public PuzzlePiece(int north, int east, int south, int west) {
 		this.north = north;
 		this.east = east;
 		this.south = south;
 		this.west = west;
 	}
-	
+
 	public void rotate() {
 		int temp = this.north;
 		this.north = this.west;
@@ -48,24 +49,24 @@ public class PuzzlePiece {
 	}
 
 	public int getSide(int direction) {
-		if(direction == NORTH)
+		if (direction == NORTH)
 			return this.north;
-		if(direction == EAST)
+		if (direction == EAST)
 			return this.east;
-		if(direction == SOUTH)
+		if (direction == SOUTH)
 			return this.south;
-		if(direction == WEST)
+		if (direction == WEST)
 			return this.west;
 		return 0;
 	}
-	public String toString()
-	{
+
+	public String toString() {
 		String s = new String();
-		s+= "NORTH:" + this.getSide(NORTH) + "\n";
-		s+= "EAST:" + this.getSide(EAST) + "\n";
-		s+= "SOUTH:" + this.getSide(SOUTH) + "\n";
-		s+= "WEST:" + this.getSide(WEST) + "\n";
+		s += "NORTH:" + this.getSide(NORTH) + "\n";
+		s += "EAST:" + this.getSide(EAST) + "\n";
+		s += "SOUTH:" + this.getSide(SOUTH) + "\n";
+		s += "WEST:" + this.getSide(WEST) + "\n";
 		return s;
-		
+
 	}
 }

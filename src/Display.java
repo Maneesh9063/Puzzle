@@ -449,7 +449,8 @@ public class Display {
 					piece.getPosition()
 							.copy(piece.getSource())
 							.lerp(piece.getTarget(),
-									1 - Math.pow(0.2, 10 * piece.getTransition()));
+									1 - Math.pow(0.2,
+											10 * piece.getTransition()));
 				} else {
 					piece.getPosition().copy(piece.getTarget());
 				}

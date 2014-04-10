@@ -185,6 +185,7 @@ public class Player {
 						PuzzlePiece.DIAMONDS_IN) };
 
 		Player p = new Player(new Grid(3, 3), puzzlePieces);
+		System.out.println(p.pieces);
 		System.out.println(p.solve());
 		// for(int i =0; i<p.getGrid().getHeight(); i++)
 		// 	for(int j = 0; j<p.getGrid().getWidth(); j++)
