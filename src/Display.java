@@ -189,15 +189,21 @@ public class Display {
 		private Vector2 tempV2 = new Vector2();
 		private PuzzlePieceImage selectedPiece;
 		private int pieceInnerWidth = 70; // How wide the inner square is
+		// How long a piece's prong is
+		private int pieceMargin = (118 - pieceInnerWidth) / 2 + 5;
 		private Vector2 mousePosition = new Vector2();
 		private Vector2 deltaPos = new Vector2();
+		private boolean selectedToGrid = true;
 		// Use 1-9 for board locations (easy way out!)
 		private int possibleBoardLocations = 0;
 		private int selectedOnGrid = -1;
 
-		private final int bankRadius = 150;// How large the bank ring will be
+		private final int bankRadius = 170;// How large the bank ring will be
+		private final int bankPadding = 70;// How far pieces will be from the
+											// ring center
 		private final int selectionDistance = 59; // How far away to select the
 													// piece
+		private final int indicatorWidth = 10;
 
 		// Fun fact: The images are sized 118 x 118 pixels. but they really only
 		// take up 70
@@ -252,6 +258,7 @@ public class Display {
 							player.place(selectedOnGrid % 3,
 									selectedOnGrid / 3, selectedPiece);
 						}
+						selectedToGrid = selectedOnGrid >= 0;
 					}
 					needsRelayout = true;
 				}
@@ -263,10 +270,6 @@ public class Display {
 					// simplifying the impending series of if
 					// statements
 					if (selectedPiece != null) {
-						mousePosition.set(e.getX() - width / 2, e.getY()
-								- height / 2);
-						boolean selectedToGrid = mousePosition.length() < bankRadius;
-
 						if (selectedOnGrid >= 0) {
 							// Remove first (if necessary)
 							player.remove(selectedOnGrid % 3,
@@ -279,7 +282,8 @@ public class Display {
 								if ((possibleBoardLocations & (1 << i)) != 0) {
 									relayout(tempV2, i);
 									double distance = tempV2
-											.distanceTo(mousePosition);
+											.distanceTo(selectedPiece
+													.getPosition());
 									if (distance < minDistance) {
 										minDistance = distance;
 										nextBoardLocation = i;
@@ -316,6 +320,7 @@ public class Display {
 								e.getY() - height / 2).subtract(mousePosition);
 						mousePosition.add(deltaPos);
 						selectedPiece.getPosition().add(deltaPos);
+						selectedToGrid = selectedPiece.getPosition().length() < bankRadius;
 					}
 				}
 
@@ -368,15 +373,31 @@ public class Display {
 			// its needed in some form
 			g.setStroke(new BasicStroke(3));
 			g.setColor(Color.BLUE);
-			g.drawLine(width / 2 - 70 * 3 / 2, height / 5 * 2 - 3 - 70 * 3 / 2,
-					width / 2 + 70 * 3 / 2, height / 5 * 2 - 3 - 70 * 3 / 2);
-			g.drawLine(width / 2 - 70 * 3 / 2, height / 5 * 2 - 3 - 70 * 3 / 2,
-					width / 2 - 70 * 3 / 2, height / 5 * 2 - 3 + 70 * 3 / 2);
-			g.drawLine(width / 2 - 70 * 3 / 2, height / 5 * 2 - 3 + 70 * 3 / 2,
-					width / 2 + 70 * 3 / 2, height / 5 * 2 - 3 + 70 * 3 / 2);
-			g.drawLine(width / 2 + 70 * 3 / 2, height / 5 * 2 - 3 + 70 * 3 / 2,
-					width / 2 + 70 * 3 / 2, height / 5 * 2 - 3 - 70 * 3 / 2);
-
+			if (selectedPiece != null) {
+				if (selectedToGrid != (selectedOnGrid >= 0)) {
+					if (selectedToGrid) {
+						g.drawRect(width / 2 - pieceInnerWidth * 3 / 2
+								- pieceMargin, height / 2 - pieceInnerWidth * 3
+								/ 2 - pieceMargin, pieceInnerWidth * 3
+								+ pieceMargin * 2, pieceInnerWidth * 3
+								+ pieceMargin * 2);
+					} else {
+						g.drawArc(width / 2 - bankRadius, height / 2
+								- bankRadius, bankRadius * 2, bankRadius * 2,
+								0, 360);
+					}
+				}
+			}
+			for (int i = 0; i < 9; i++) {
+				if (selectedPiece == null
+						|| (possibleBoardLocations & (1 << i)) != 0) {
+					relayout(tempV2, i);
+					g.drawArc((int) tempV2.getX() + width / 2 - indicatorWidth
+							/ 2, (int) tempV2.getY() + height / 2
+							- indicatorWidth / 2, indicatorWidth,
+							indicatorWidth, 0, 360);
+				}
+			}
 			for (int i = 0; i < player.getGrid().getHeight(); i++) {
 				for (int j = 0; j < player.getGrid().getWidth(); j++) {
 					if (player.getGrid().isOccupied(i, j)) {
@@ -467,7 +488,7 @@ public class Display {
 			if (vector == null) {
 				return;
 			}
-			vector.set(0, bankRadius + pieceInnerWidth).rotate(
+			vector.set(0, bankRadius + bankPadding).rotate(
 					-Math.PI * 2 * ((double) b / length));
 		}
 	}
