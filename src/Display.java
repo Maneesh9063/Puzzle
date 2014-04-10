@@ -69,11 +69,12 @@ public class Display {
 					puzzlePieces[i]);
 		}
 		player = new Player(new Grid(3, 3), pieces);
-//		player.get$Bank();
-//		player.get$Bank()[0].rotate(); // currently does not display rotations
-//		player.place(0, 0, player.get$Bank()[0]);
-//		player.place(1, 1, player.get$Bank()[1]);
-//		player.place(2, 2, player.get$Bank()[2]);
+		// player.get$Bank();
+		// player.get$Bank()[0].rotate(); // currently does not display
+		// rotations
+		// player.place(0, 0, player.get$Bank()[0]);
+		// player.place(1, 1, player.get$Bank()[1]);
+		// player.place(2, 2, player.get$Bank()[2]);
 		JFrame frame = new JFrame("Puzzle");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setSize(1200, 800);
@@ -90,7 +91,7 @@ public class Display {
 			e.printStackTrace();
 		}
 	}
-	
+
 	// Creates a panel with buttons on it
 	private JPanel panel() {
 		JPanel panel = new JPanel();
@@ -105,14 +106,17 @@ public class Display {
 		solve.addActionListener(a);
 		solve.setPreferredSize(new Dimension(400, 100));
 		// I did this part for fun
-		solve.setIcon(new Icon(){
+		solve.setIcon(new Icon() {
 			public int getIconHeight() {
 				return 100;
 			}
+
 			public int getIconWidth() {
 				return 400;
 			}
-			public void paintIcon(Component arg0, Graphics arg1, int arg2,int arg3) {
+
+			public void paintIcon(Component arg0, Graphics arg1, int arg2,
+					int arg3) {
 				Graphics2D g = (Graphics2D) arg1;
 				BufferedImage image;
 				try {
@@ -121,17 +125,16 @@ public class Display {
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-			}});
+			}
+		});
 
-		
-		
 		JButton clear = new JButton("Clear");
 		class ClearListener implements ActionListener {
 			public void actionPerformed(ActionEvent e) {
-				for(int i = 0; i<player.getGrid().getHeight(); i++)
-					for(int j = 0; j<player.getGrid().getWidth(); j++)
-						if(player.getGrid().getCell(j,i) != null)
-							player.remove(j,i);
+				for (int i = 0; i < player.getGrid().getHeight(); i++)
+					for (int j = 0; j < player.getGrid().getWidth(); j++)
+						if (player.getGrid().getCell(j, i) != null)
+							player.remove(j, i);
 				needsRelayout = true;
 			}
 		}
@@ -139,14 +142,17 @@ public class Display {
 		clear.addActionListener(clearListener);
 		clear.setPreferredSize(new Dimension(400, 100));
 		// I did this part for fun
-		clear.setIcon(new Icon(){
+		clear.setIcon(new Icon() {
 			public int getIconHeight() {
 				return 100;
 			}
+
 			public int getIconWidth() {
 				return 400;
 			}
-			public void paintIcon(Component arg0, Graphics arg1, int arg2,int arg3) {
+
+			public void paintIcon(Component arg0, Graphics arg1, int arg2,
+					int arg3) {
 				Graphics2D g = (Graphics2D) arg1;
 				BufferedImage image;
 				try {
@@ -155,12 +161,15 @@ public class Display {
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-			}});
+			}
+		});
 		panel.add(clear);
 		panel.add(solve);
 		return panel;
 	}
+
 	private boolean needsRelayout = true;
+
 	public static void main(String[] args) {
 		new Display();
 	}
@@ -174,35 +183,21 @@ public class Display {
 		 * 
 		 */
 		private static final long serialVersionUID = -934843960429454280L;
-		private Display display;
 		private long lastTick = 0;
 		private int width = 0;
 		private int height = 0;
-		private PuzzlePieceImage p;
+		private Vector2 tempV2 = new Vector2();
+		private PuzzlePieceImage selectedPiece;
 		private int pieceInnerWidth = 70; // How wide the inner square is
+		private Vector2 mousePosition = new Vector2();
+		private Vector2 deltaPos = new Vector2();
+		// Use 1-9 for board locations (easy way out!)
+		private int possibleBoardLocations = 0;
+		private int selectedOnGrid = -1;
 
-		// TODO: MAKE ALL THESE FINAL
-		private int gridMargin = 0;
-		private int bankMargin = 150;
-		private int bankPadding = 40;// How far the pieces will stay apart in
-										// the bank
-		private int selectionDistance = 59; // How far away to select the piece
-
-		
-
-		// +------+ = gridPadding
-		// |XXXXXX|
-		// |XXXXXX|
-		// |XXXXXX|
-		// +------+
-		// ^
-		// | gridMargin
-		// v
-		// . Origin
-		// ^
-		// | bankMargin
-		// v
-		// XX XX XX
+		private final int bankRadius = 150;// How large the bank ring will be
+		private final int selectionDistance = 59; // How far away to select the
+													// piece
 
 		// Fun fact: The images are sized 118 x 118 pixels. but they really only
 		// take up 70
@@ -211,72 +206,97 @@ public class Display {
 		// take up 70
 
 		public PuzzleDrawingComponent(Display display) {
-			this.display = display;
-			
 			this.addMouseListener(new MouseListener() {
 				@Override
 				public void mouseClicked(MouseEvent e) {
 				}
-				int originalX;
-				int originalY;
-				boolean startedOnBank = false;
-				int bankX;
+
 				@Override
 				public void mousePressed(MouseEvent e) {
-					int currentX = e.getX() - width / 2;
-					int currentY = e.getY() - height / 2;
-					
+					mousePosition.set(e.getX() - width / 2, e.getY() - height
+							/ 2);
+
 					double minDistance = Double.POSITIVE_INFINITY;
 					for (int i = 0; i < pieces.length; i++) {
 						double distance = Math.max(
 								Math.abs(pieces[i].getPosition().getX()
-										- currentX),
+										- mousePosition.getX()),
 								Math.abs(pieces[i].getPosition().getY()
-										- currentY));
+										- mousePosition.getY()));
 						if (distance < minDistance) {
 							minDistance = distance;
-							p = pieces[i];
+							selectedPiece = pieces[i];
 						}
 					}
-					
-					originalX = (int) Math.round(p.getPosition().getX() / 70) + 1;
-					originalY = (int) Math.round(p.getPosition().getY() / 70) + 2;
-					
-					if(originalY == 4) { // if the piece you  picked up is in the bank, then onBank is true, otherwise it's false :(
-						startedOnBank = true;
+					if (minDistance > selectionDistance) {
+						selectedPiece = null;
 					} else {
-						startedOnBank = false;
+						selectedOnGrid = -1;
+						// Compute possible board locations
+						for (int i = 0; i < 9; i++) {
+							if (player.getGrid().getCell(i % 3, i / 3) == selectedPiece) {
+								selectedOnGrid = i;
+								break;
+							}
+						}
+						if (selectedOnGrid >= 0) {
+							player.remove(selectedOnGrid % 3,
+									selectedOnGrid / 3);
+						}
+						for (int i = 0; i < 9; i++) {
+							if (player.canPlace(i % 3, i / 3, selectedPiece)) {
+								possibleBoardLocations |= 1 << i;
+							}
+						}
+						if (selectedOnGrid >= 0) {
+							player.place(selectedOnGrid % 3,
+									selectedOnGrid / 3, selectedPiece);
+						}
 					}
+					needsRelayout = true;
 				}
-				
+
 				@Override
 				public void mouseReleased(MouseEvent e) {
-					int releaseX = (int) Math.round(p.getPosition().getX() / 70) + 1;
-					int releaseY = (int) Math.round(p.getPosition().getY() / 70) + 2;
-					bankX = releaseX + 5; // if you're plopping it in the bank you'll need to know where to put it :) - this provides an index of where you're placing it
-					boolean onGrid; // keeps track of whether or not you're dropping onto the grid, as well as simplifying the impending series of if statements
-					
-					if(releaseY >= 0 && releaseY < player.getGrid().getHeight() && releaseX >= 0 && releaseX < player.getGrid().getWidth()) onGrid = true;
-					else onGrid = false;
-					
-					// if the piece you had picked up was in the bank, you can place it where you dropped it
-					if(startedOnBank) {
-						if(player.canPlace(releaseX, releaseY, p)) {
-							player.place(releaseX, releaseY, p);
+					// keeps track of whether or not you're
+					// dropping onto the grid, as well as
+					// simplifying the impending series of if
+					// statements
+					if (selectedPiece != null) {
+						mousePosition.set(e.getX() - width / 2, e.getY()
+								- height / 2);
+						boolean selectedToGrid = mousePosition.length() < bankRadius;
+
+						if (selectedOnGrid >= 0) {
+							// Remove first (if necessary)
+							player.remove(selectedOnGrid % 3,
+									selectedOnGrid / 3);
 						}
-					} else { // otherwise, if you try to put it in the grid and it's in the grid already, you have to remove it from the grid, and replace it where you want
-						if(onGrid) {
-							if(player.canPlace(releaseX, releaseY, p)) {
-								player.remove(originalX, originalY);
-								player.place(releaseX, releaseY, p);
+						if (selectedToGrid && possibleBoardLocations > 0) {
+							int nextBoardLocation = -1;
+							double minDistance = Double.POSITIVE_INFINITY;
+							for (int i = 0; i < 9; i++) {
+								if ((possibleBoardLocations & (1 << i)) != 0) {
+									relayout(tempV2, i);
+									double distance = tempV2
+											.distanceTo(mousePosition);
+									if (distance < minDistance) {
+										minDistance = distance;
+										nextBoardLocation = i;
+									}
+								}
 							}
-						} else if(releaseY == 4) { // if you're putting it in the bank then IT WILL DO IT
-							player.remove(originalX, originalY);
+							if (nextBoardLocation >= 0) {
+								player.place(nextBoardLocation % 3,
+										nextBoardLocation / 3, selectedPiece);
+							}
 						}
+
+						selectedPiece = null;
+						// Clear possible board locations
+						possibleBoardLocations = 0;
+						needsRelayout = true;
 					}
-					
-					p = null;
-					needsRelayout=true;
 				}
 
 				@Override
@@ -291,9 +311,12 @@ public class Display {
 			this.addMouseMotionListener(new MouseMotionListener() {
 				@Override
 				public void mouseDragged(MouseEvent e) {
-					if (p != null)
-						p.getPosition().set(e.getX() - width / 2,
-								e.getY() - height / 2);
+					if (selectedPiece != null) {
+						deltaPos.set(e.getX() - width / 2,
+								e.getY() - height / 2).subtract(mousePosition);
+						mousePosition.add(deltaPos);
+						selectedPiece.getPosition().add(deltaPos);
+					}
 				}
 
 				@Override
@@ -305,20 +328,24 @@ public class Display {
 				@Override
 				public void mouseWheelMoved(MouseWheelEvent e) {
 					if (e.getScrollType() == MouseWheelEvent.WHEEL_UNIT_SCROLL
-							&& p != null) {
-						if(e.getPreciseWheelRotation() == -1) {
-							p.rotate();
-							changed = p;
-						} else if(e.getPreciseWheelRotation() == 1) {
-							p.rotateTheWayOppositeOfTheOtherRotateMethod();
-							changed = p;
+							&& selectedPiece != null) {
+						if (e.getPreciseWheelRotation() == -1) {
+							selectedPiece.rotate();
+							changed = selectedPiece;
+						} else if (e.getPreciseWheelRotation() == 1) {
+							selectedPiece
+									.rotateTheWayOppositeOfTheOtherRotateMethod();
+							changed = selectedPiece;
 						}
-						
+
 					}
 				}
 			});
 		}
-		private PuzzlePiece changed = null; // to be used l8r, keeps track of the puzzle piece you just rotated
+
+		private PuzzlePiece changed = null; // to be used l8r, keeps track of
+											// the puzzle piece you just rotated
+
 		/**
 		 * @param graphics
 		 *            the graphics context
@@ -336,29 +363,35 @@ public class Display {
 			// working grid&//player class
 			width = this.getWidth();
 			height = this.getHeight();
-	
-			//Draw a Box around the grid. This is alllll hardcoded but I think its needed in some form
+
+			// Draw a Box around the grid. This is alllll hardcoded but I think
+			// its needed in some form
 			g.setStroke(new BasicStroke(3));
 			g.setColor(Color.BLUE);
-			g.drawLine(width/2 - 70*3/2,height/5*2-3-70*3/2 ,width/2+70*3/2,height/5*2-3-70*3/2);
-			g.drawLine(width/2 - 70*3/2,height/5*2-3-70*3/2 ,width/2-70*3/2,height/5*2-3+70*3/2);
-			g.drawLine(width/2-70*3/2,height/5*2-3+70*3/2 ,width/2+70*3/2,height/5*2-3+70*3/2);
-			g.drawLine(width/2+70*3/2,height/5*2-3+70*3/2 ,width/2+70*3/2,height/5*2-3-70*3/2);
-			
+			g.drawLine(width / 2 - 70 * 3 / 2, height / 5 * 2 - 3 - 70 * 3 / 2,
+					width / 2 + 70 * 3 / 2, height / 5 * 2 - 3 - 70 * 3 / 2);
+			g.drawLine(width / 2 - 70 * 3 / 2, height / 5 * 2 - 3 - 70 * 3 / 2,
+					width / 2 - 70 * 3 / 2, height / 5 * 2 - 3 + 70 * 3 / 2);
+			g.drawLine(width / 2 - 70 * 3 / 2, height / 5 * 2 - 3 + 70 * 3 / 2,
+					width / 2 + 70 * 3 / 2, height / 5 * 2 - 3 + 70 * 3 / 2);
+			g.drawLine(width / 2 + 70 * 3 / 2, height / 5 * 2 - 3 + 70 * 3 / 2,
+					width / 2 + 70 * 3 / 2, height / 5 * 2 - 3 - 70 * 3 / 2);
+
 			for (int i = 0; i < player.getGrid().getHeight(); i++) {
 				for (int j = 0; j < player.getGrid().getWidth(); j++) {
 					if (player.getGrid().isOccupied(i, j)) {
-						if(changed!= null) {
-							if(player.getGrid().getCell(i, j).equals(changed)) {
+						if (changed != null) {
+							if (player.getGrid().getCell(i, j).equals(changed)) {
 								player.remove(i, j);
-								if(player.canPlace(i, j, changed)) {
+								if (player.canPlace(i, j, changed)) {
 									player.place(i, j, changed);
 								}
 							}
 						}
 						if (needsRelayout) {
-							relayout((PuzzlePieceImage) player.getGrid()
-									.getCell(i, j), i - 1, 2 - j);
+							relayout(
+									((PuzzlePieceImage) (player.getGrid().getCell(
+											i, j))).getPosition(), i + 3 * j);
 						}
 					}
 				}
@@ -366,8 +399,10 @@ public class Display {
 			for (int i = 0; i < player.get$Bank().length; i++) {
 				if (player.get$Bank()[i] != null) {
 					if (needsRelayout) {
-						relayout((PuzzlePieceImage) player.get$Bank()[i], i
-								- (player.get$Bank().length - 1) / 2.0);
+						relayout(
+								((PuzzlePieceImage) (player.get$Bank()[i]))
+										.getPosition(),
+								i, player.get$Bank().length);
 					}
 				}
 			}
@@ -406,34 +441,34 @@ public class Display {
 		}
 
 		/**
-		 * Changes the target position of a piece in a grid - where it needs to
-		 * go.
+		 * Changes a given vector to a given (g:1-9) relative position in the
+		 * grid.
 		 * 
-		 * @param piece
-		 * @param x
-		 * @param y
+		 * @param vector
+		 * @param g
 		 */
-		private void relayout(PuzzlePieceImage piece, int x, int y) {
-			if (piece == null) {
+		private void relayout(Vector2 vector, int g) {
+			if (vector == null) {
 				return;
 			}
-			piece.getPosition().set(pieceInnerWidth * x,
-					-gridMargin - pieceInnerWidth * y);
+			vector.set(pieceInnerWidth * (g % 3 - 1), pieceInnerWidth
+					* (g / 3 - 1));
 		}
 
 		/**
-		 * Changes the target position of a piece in a bank - where it needs to
-		 * go.
+		 * Changes a given vector to a given (b/length) relative position in the
+		 * bank
 		 * 
-		 * @param puzzlePieceImage
-		 * @param x
+		 * @param vector
+		 * @param b
+		 * @param length
 		 */
-		private void relayout(PuzzlePieceImage piece, double x) {
-			if (piece == null) {
+		private void relayout(Vector2 vector, int b, int length) {
+			if (vector == null) {
 				return;
 			}
-			piece.getPosition().set((pieceInnerWidth + bankPadding) * x,
-					bankMargin);
+			vector.set(0, bankRadius + pieceInnerWidth).rotate(
+					-Math.PI * 2 * ((double) b / length));
 		}
 	}
 }
