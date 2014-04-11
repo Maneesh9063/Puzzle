@@ -385,14 +385,14 @@ public class Display {
 			height = this.getHeight();
 			if (player.getGrid().isFull()) {
 				g.setColor(colorArray[(int) (color)]);
-				if ((color+=60*timeElapsed) >= colorArray.length) {
+				if ((color += 60 * timeElapsed) >= colorArray.length) {
 					color = 0;
 				}
 			} else {
 				g.setColor(Color.WHITE);
 
 			}
-			g.fillRect(0, 0, width, height);
+			// g.fillRect(0, 0, width, height);
 
 			// Draw a Box around the grid. This is alllll hardcoded but I think
 			// its needed in some form
@@ -470,6 +470,7 @@ public class Display {
 				} else {
 					piece.getPosition().copy(piece.getTarget());
 				}
+				piece.updateVisualRotation();
 				// draw the pieces in the bank
 				drawPiece(piece, g);
 			}

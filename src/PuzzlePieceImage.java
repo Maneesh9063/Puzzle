@@ -25,24 +25,26 @@ public class PuzzlePieceImage extends PuzzlePiece {
 						.getSide(PuzzlePiece.SOUTH), piece
 						.getSide(PuzzlePiece.WEST));
 		try {
-			image = ImageIO.read(new File(imagePath));
+			originalImage = ImageIO.read(new File(imagePath));
+			image = new BufferedImage(originalImage.getWidth(),
+					originalImage.getHeight(), originalImage.getType());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		this.position = position;
 		this.rotation = rotation % 360;
+		this.updateVisualRotation();
 	}
 
-	public void rotate() {
-		super.rotate();
+	public void updateVisualRotation() {
 		AffineTransform tx = new AffineTransform();
 		int w = image.getWidth();
 		int h = image.getHeight();
-		double angle = Math.PI / 2;
+		double angle = Math.PI * super.getRotation() / 180;
 		tx.rotate(angle, w / 2, h / 2);
 		AffineTransformOp op = new AffineTransformOp(tx,
 				AffineTransformOp.TYPE_BILINEAR);
-		image = op.filter(image, null);
+		image = op.filter(originalImage, image);
 
 	}
 
@@ -105,6 +107,7 @@ public class PuzzlePieceImage extends PuzzlePiece {
 	private int rotation;
 	private Vector2 position;
 	private BufferedImage image;
+	private BufferedImage originalImage;
 	private Vector2 source = new Vector2();
 	private Vector2 target = new Vector2();
 	private double transition = 0;
