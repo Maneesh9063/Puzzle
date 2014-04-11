@@ -22,7 +22,7 @@ public class Player {
 		int y = index/grid.getWidth();
 		int x = index-index/grid.getWidth()*grid.getWidth();
 		for(int i=bank.size()-1; i>-1; i--){
-			for(int j=0; j<3; j++){
+			for(int j=0; j<4; j++){
 				if(place(x,y,bank.get(i))){
 					if(pSolve(index+1)) return true;
 					remove(x,y);
