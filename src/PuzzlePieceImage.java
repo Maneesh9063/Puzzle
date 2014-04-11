@@ -17,7 +17,8 @@ import javax.imageio.ImageIO;
 public class PuzzlePieceImage extends PuzzlePiece {
 	// Constructor takes the image path (example: "images/piece_1.png"), takes
 	// in a Vector2 position,
-	// a rotation (0 - 359, 360 = 0), and the PuzzlePiece it is associated with
+	// a visualRotation (0 - 359, 360 = 0), and the PuzzlePiece it is associated
+	// with
 	public PuzzlePieceImage(String imagePath, Vector2 position, int rotation,
 			PuzzlePiece piece) {
 		super(piece.getSide(PuzzlePiece.NORTH),
@@ -32,7 +33,7 @@ public class PuzzlePieceImage extends PuzzlePiece {
 			e.printStackTrace();
 		}
 		this.position = position;
-		this.rotation = rotation % 360;
+		this.visualRotation = rotation % 360;
 		this.updateVisualRotation();
 	}
 
@@ -40,7 +41,7 @@ public class PuzzlePieceImage extends PuzzlePiece {
 		AffineTransform tx = new AffineTransform();
 		int w = image.getWidth();
 		int h = image.getHeight();
-		double angle = Math.PI * super.getRotation() / 180;
+		double angle = Math.PI * this.getVisualRotation() / 180;
 		tx.rotate(angle, w / 2, h / 2);
 		AffineTransformOp op = new AffineTransformOp(tx,
 				AffineTransformOp.TYPE_BILINEAR);
@@ -48,14 +49,14 @@ public class PuzzlePieceImage extends PuzzlePiece {
 
 	}
 
-	// returns the rotation of the image (not necessarily the piece)
-	public int getRotation() {
-		return rotation;
+	// returns the visualRotation of the image (not necessarily the piece)
+	public double getVisualRotation() {
+		return visualRotation;
 	}
 
-	// sets the rotation of the image (NOT NECESSARILY THE PIECE)
-	public void setRotation(int rotation) {
-		this.rotation = rotation;
+	// sets the visualRotation of the image (NOT NECESSARILY THE PIECE)
+	public void setVisualRotation(double visualRotation) {
+		this.visualRotation = visualRotation;
 	}
 
 	public Vector2 getPosition() {
@@ -104,7 +105,7 @@ public class PuzzlePieceImage extends PuzzlePiece {
 		this.source = source;
 	}
 
-	private int rotation;
+	private double visualRotation;
 	private Vector2 position;
 	private BufferedImage image;
 	private BufferedImage originalImage;

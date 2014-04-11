@@ -207,7 +207,6 @@ public class Display {
 													// piece
 		private final int indicatorWidth = 10;
 		private final double transitionDuration = 2;
-		private PuzzlePiece changed = null; // to be used l8r, keeps track of
 
 		// the puzzle piece you just rotated
 
@@ -345,13 +344,10 @@ public class Display {
 							&& selectedPiece != null) {
 						if (e.getPreciseWheelRotation() == -1) {
 							selectedPiece.rotate();
-							changed = selectedPiece;
 						} else if (e.getPreciseWheelRotation() == 1) {
 							selectedPiece
 									.rotateTheWayOppositeOfTheOtherRotateMethod();
-							changed = selectedPiece;
 						}
-
 					}
 				}
 			});
@@ -426,14 +422,6 @@ public class Display {
 			for (int i = 0; i < player.getGrid().getHeight(); i++) {
 				for (int j = 0; j < player.getGrid().getWidth(); j++) {
 					if (player.getGrid().isOccupied(i, j)) {
-						if (changed != null) {
-							if (player.getGrid().getCell(i, j).equals(changed)) {
-								player.remove(i, j);
-								if (player.canPlace(i, j, changed)) {
-									player.place(i, j, changed);
-								}
-							}
-						}
 						if (needsRelayout) {
 							PuzzlePieceImage piece = (PuzzlePieceImage) player
 									.getGrid().getCell(i, j);
@@ -462,14 +450,23 @@ public class Display {
 				if (piece.getTransition() < 1) {
 					piece.setTransition(Math.min(piece.getTransition()
 							+ timeElapsed / transitionDuration, 1));
-					piece.getPosition()
-							.copy(piece.getSource())
-							.lerp(piece.getTarget(),
-									1 - Math.pow(0.2,
-											10 * piece.getTransition()));
+					double scaled = 1.0 - Math.pow(0.2,
+							10 * piece.getTransition());
+					piece.getPosition().copy(piece.getSource())
+							.lerp(piece.getTarget(), scaled);
 				} else {
 					piece.getPosition().copy(piece.getTarget());
 				}
+				// Make the angle change properly
+				if (Math.abs((piece.getVisualRotation() - 360)
+						- piece.getRotation()) <= 180) {
+					piece.setVisualRotation(piece.getVisualRotation() - 360);
+				} else if (Math.abs((piece.getVisualRotation() + 360)
+						- piece.getRotation()) < 180) {
+					piece.setVisualRotation(piece.getVisualRotation() + 360);
+				}
+				piece.setVisualRotation(piece.getVisualRotation() * 0.97 + 0.03
+						* piece.getRotation());
 				piece.updateVisualRotation();
 				// draw the pieces in the bank
 				drawPiece(piece, g);
