@@ -100,7 +100,9 @@ public class Display {
 		JButton solve = new JButton("Solve");
 		class A implements ActionListener {
 			public void actionPerformed(ActionEvent e) {
+				System.out.println("Start solve");
 				player.solve();
+				System.out.println("End solve");
 				needsRelayout = true;
 				lastTick = 0;
 			}
@@ -355,6 +357,10 @@ public class Display {
 			});
 		}
 
+		private final Color[] colorArray = { Color.WHITE, Color.BLACK,
+				Color.RED, Color.GREEN, Color.BLUE };
+		private double color = 0;
+
 		/**
 		 * @param graphics
 		 *            the graphics context
@@ -377,6 +383,16 @@ public class Display {
 			// working grid&//player class
 			width = this.getWidth();
 			height = this.getHeight();
+			if (player.getGrid().isFull()) {
+				g.setColor(colorArray[(int) (color)]);
+				if ((color+=60*timeElapsed) >= colorArray.length) {
+					color = 0;
+				}
+			} else {
+				g.setColor(Color.WHITE);
+
+			}
+			g.fillRect(0, 0, width, height);
 
 			// Draw a Box around the grid. This is alllll hardcoded but I think
 			// its needed in some form
@@ -457,7 +473,6 @@ public class Display {
 				// draw the pieces in the bank
 				drawPiece(piece, g);
 			}
-
 			this.repaint();
 		}
 
@@ -506,7 +521,7 @@ public class Display {
 			if (vector == null) {
 				return;
 			}
-			vector.set(0, bankRadius + bankPadding).rotate(
+			vector.set(0, -bankRadius - bankPadding).rotate(
 					-Math.PI * 2 * ((double) b / length));
 		}
 	}
