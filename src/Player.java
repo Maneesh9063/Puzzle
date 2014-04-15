@@ -8,12 +8,22 @@ public class Player {
 		for(PuzzlePiece p : pieces)
 			bank.add(p);
 	}
-
-	public boolean solve(){
-		// ensure that the board is cleared before solving
+	
+	public void clear(){
 		for(int x=0; x<grid.getWidth(); x++)
 			for(int y=0; y<grid.getHeight(); y++)
 				remove(x,y);
+	}
+	
+	public void randomize(){
+		for(PuzzlePiece p : bank)
+			for(int i=0; i<(int)(Math.random()*4); i++)
+					p.rotate();
+	}
+
+	public boolean solve(){
+		// ensure that the board is cleared before solving
+		clear();
 		// if this returns false then the puzzle is not solvable
 		return pSolve(0);
 	}
