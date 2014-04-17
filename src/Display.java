@@ -29,6 +29,7 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 /**
@@ -112,7 +113,11 @@ public class Display {
 					player.solve();
 					needsRelayout = true;
 					lastTick = 0;
+					pressedSolveButton = true;
+					if(player.getGrid().isFull()) JOptionPane.showMessageDialog( new JFrame(), "You've solved it with the button, good job.");
 				}
+				
+								
 			}
 		}
 		ActionListener a = new A();
@@ -154,7 +159,7 @@ public class Display {
 					player.clear();
 					player.randomize();
 					needsRelayout = true;
-					beenSolved = false;
+					pressedSolveButton = false;
 				}
 			}
 		}
@@ -194,7 +199,7 @@ public class Display {
 		return panel;
 	}
 
-	private boolean beenSolved = false;
+	private boolean pressedSolveButton = false;
 
 	/**
 	 * A component to draw the puzzle and its pieces.
@@ -313,6 +318,7 @@ public class Display {
 									if (distance < minDistance) {
 										minDistance = distance;
 										nextBoardLocation = i;
+										//
 									}
 								}
 							}
@@ -321,6 +327,9 @@ public class Display {
 										nextBoardLocation / 3, selectedPiece);
 							}
 						}
+						
+						if(player.getGrid().isFull() && !pressedSolveButton) 
+							JOptionPane.showMessageDialog(new JFrame(), "Wow, you wasted your time");
 
 						selectedPiece = null;
 						// Clear possible board locations
@@ -487,18 +496,13 @@ public class Display {
 				// draw the pieces in the bank
 				drawPiece(piece, g);
 			}
-			if(player.getGrid().isFull() == true) beenSolved = true;
-			else if(player.getGrid().isFull() == false) beenSolved = false;
-			if(beenSolved && celebrationCounter >= 150) {
-//				player.clear();
-//				player.randomize();
-//				player.solve();
+			if(celebrationCounter >= 150 && player.getGrid().isFull() && pressedSolveButton == false) {
 				for(int i = 0; i < pieces.length; i++) {
 					pieces[i].setVisualRotation(new Random().nextInt(360));
 				}
-//				needsRelayout = true;
 				celebrationCounter = 0;
 			}
+			
 			celebrationCounter++;
 			this.repaint();
 		}
