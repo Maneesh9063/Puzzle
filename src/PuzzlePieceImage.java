@@ -37,6 +37,10 @@ public class PuzzlePieceImage extends PuzzlePiece {
 		this.updateVisualRotation();
 	}
 
+	/*
+		Rotates BufferedImage to display angle that the piece appears to be at
+			visually
+	*/
 	public void updateVisualRotation() {
 		AffineTransform tx = new AffineTransform();
 		int w = image.getWidth();
