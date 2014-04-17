@@ -42,7 +42,9 @@ public class Display {
 	protected PuzzlePieceImage[] pieces;
 	private boolean needsRelayout = true;
 	private long lastTick = 0;
-	// Constructor for the display- all you have to do to make this run is construct it
+
+	// Constructor for the display- all you have to do to make this run is
+	// construct it
 	public Display() {
 		// create puzzle pieces
 		PuzzlePiece[] puzzlePieces = {
@@ -86,7 +88,7 @@ public class Display {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setSize(1200, 800);
 		frame.setLocation(10, 10);
-//		frame.setResizable(false);
+		// frame.setResizable(false);
 		frame.setMinimumSize(new Dimension(600, 800));
 		frame.add(new PuzzleDrawingComponent(this));
 		frame.add(panel(), BorderLayout.SOUTH);
@@ -106,15 +108,16 @@ public class Display {
 		JButton solve = new JButton("Solve");
 		class A implements ActionListener {
 			public void actionPerformed(ActionEvent e) {
-				if(!player.getGrid().isFull()) {
+				if (!player.getGrid().isFull()) {
 					player.solve();
 					needsRelayout = true;
 					lastTick = 0;
 					pressedSolveButton = true;
-					if(player.getGrid().isFull()) JOptionPane.showMessageDialog( new JFrame(), "You've solved it with the button, good job.");
+					if (player.getGrid().isFull())
+						JOptionPane.showMessageDialog(new JFrame(),
+								"You've solved it with the button, good job.");
 				}
-				
-								
+
 			}
 		}
 		ActionListener a = new A();
@@ -136,12 +139,13 @@ public class Display {
 				BufferedImage image;
 				try {
 					image = ImageIO.read(new File("images/solveButton.png"));
-					
+
 					AffineTransform tx = new AffineTransform();
 					tx.scale(0.5, 1);
-					AffineTransformOp op = new AffineTransformOp(tx,AffineTransformOp.TYPE_BILINEAR);
-					image = op.filter(image,null);
-					
+					AffineTransformOp op = new AffineTransformOp(tx,
+							AffineTransformOp.TYPE_BILINEAR);
+					image = op.filter(image, null);
+
 					g.drawImage(image, 0, 0, null);
 				} catch (IOException e) {
 					e.printStackTrace();
@@ -152,7 +156,7 @@ public class Display {
 		JButton clear = new JButton("Clear");
 		class ClearListener implements ActionListener {
 			public void actionPerformed(ActionEvent e) {
-				if(!player.getGrid().isEmpty()) {
+				if (!player.getGrid().isEmpty()) {
 					player.clear();
 					player.randomize();
 					needsRelayout = true;
@@ -179,12 +183,13 @@ public class Display {
 				BufferedImage image;
 				try {
 					image = ImageIO.read(new File("images/clear.png"));
-					
+
 					AffineTransform tx = new AffineTransform();
 					tx.scale(0.5, 1);
-					AffineTransformOp op = new AffineTransformOp(tx,AffineTransformOp.TYPE_BILINEAR);
-					image = op.filter(image,null);
-					
+					AffineTransformOp op = new AffineTransformOp(tx,
+							AffineTransformOp.TYPE_BILINEAR);
+					image = op.filter(image, null);
+
 					g.drawImage(image, 0, 0, null);
 				} catch (IOException e) {
 					e.printStackTrace();
@@ -324,9 +329,10 @@ public class Display {
 										nextBoardLocation / 3, selectedPiece);
 							}
 						}
-						
-						if(player.getGrid().isFull() && !pressedSolveButton) 
-							JOptionPane.showMessageDialog(new JFrame(), "Wow, you wasted your time");
+
+						if (player.getGrid().isFull() && !pressedSolveButton)
+							JOptionPane.showMessageDialog(new JFrame(),
+									"Wow, you wasted your time");
 
 						selectedPiece = null;
 						// Clear possible board locations
@@ -373,6 +379,12 @@ public class Display {
 							selectedPiece
 									.rotateTheWayOppositeOfTheOtherRotateMethod();
 						}
+						possibleBoardLocations = 0;
+						for (int i = 0; i < 9; i++) {
+							if (player.canPlace(i % 3, i / 3, selectedPiece)) {
+								possibleBoardLocations |= 1 << i;
+							}
+						}
 					}
 				}
 			});
@@ -401,7 +413,7 @@ public class Display {
 			width = this.getWidth();
 			height = this.getHeight();
 			if (player.getGrid().isFull()) {
-				
+
 			} else {
 				g.setColor(Color.WHITE);
 
@@ -489,17 +501,20 @@ public class Display {
 				// draw the pieces in the bank
 				drawPiece(piece, g);
 			}
-			if(celebrationCounter >= 150 && player.getGrid().isFull() && pressedSolveButton == false) {
-				for(int i = 0; i < pieces.length; i++) {
+			if (celebrationCounter >= 150 && player.getGrid().isFull()
+					&& pressedSolveButton == false) {
+				for (int i = 0; i < pieces.length; i++) {
 					pieces[i].setVisualRotation(new Random().nextInt(360));
 				}
 				celebrationCounter = 0;
 			}
-			
+
 			celebrationCounter++;
 			this.repaint();
 		}
+
 		private int celebrationCounter = 0;
+
 		/**
 		 * Draws a given piece into its location in a given graphics context.
 		 * 
@@ -517,7 +532,7 @@ public class Display {
 					/ 2
 					+ height / 2, null);
 		}
-		
+
 		/**
 		 * Changes a given vector to a given (g:1-9) relative position in the
 		 * grid.
@@ -549,6 +564,7 @@ public class Display {
 					-Math.PI * 2 * ((double) b / length));
 		}
 	}
+
 	public static void main(String[] args) {
 		new Display();
 	}
