@@ -1,11 +1,10 @@
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -24,11 +23,9 @@ import java.util.Random;
 
 import javax.imageio.ImageIO;
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
@@ -380,10 +377,6 @@ public class Display {
 				}
 			});
 		}
-
-		private final Color[] colorArray = { Color.WHITE, Color.BLACK,
-				Color.RED, Color.GREEN, Color.BLUE };
-		private double color = 0;
 
 		/**
 		 * @param graphics
