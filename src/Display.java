@@ -34,13 +34,12 @@ import javax.swing.JPanel;
  * 
  * Written Mar 25, 2014
  * 
- * @author Ted Beiber, William Wu, and Rohan Kadambi
+ * @author Ted Bieber, William Wu, and Rohan Kadambi
  * 
  */
 public class Display {
 	protected Player player;
 	protected PuzzlePieceImage[] pieces;
-	private boolean needsRelayout = true;
 	private long lastTick = 0;
 
 	// Constructor for the display- all you have to do to make this run is
@@ -110,7 +109,6 @@ public class Display {
 			public void actionPerformed(ActionEvent e) {
 				if (!player.getGrid().isFull()) {
 					player.solve();
-					needsRelayout = true;
 					lastTick = 0;
 					pressedSolveButton = true;
 					if (player.getGrid().isFull())
@@ -159,7 +157,6 @@ public class Display {
 				if (!player.getGrid().isEmpty()) {
 					player.clear();
 					player.randomize();
-					needsRelayout = true;
 					pressedSolveButton = false;
 				}
 			}
@@ -232,7 +229,6 @@ public class Display {
 		private final int selectionDistance = 59; // How far away to select the
 													// piece
 		private final int indicatorWidth = 10;
-		private final double transitionDuration = 2;
 
 		// the puzzle piece you just rotated
 
@@ -268,7 +264,6 @@ public class Display {
 					if (minDistance > selectionDistance) {
 						selectedPiece = null;
 					} else {
-						selectedPiece.setTransition(1);
 						selectedPiece.getTarget().copy(
 								selectedPiece.getPosition());
 						selectedOnGrid = -1;
@@ -287,10 +282,6 @@ public class Display {
 							if (player.canPlace(i % 3, i / 3, selectedPiece)) {
 								possibleBoardLocations |= 1 << i;
 							}
-						}
-						if (selectedOnGrid >= 0) {
-							player.place(selectedOnGrid % 3,
-									selectedOnGrid / 3, selectedPiece);
 						}
 						selectedToGrid = selectedOnGrid >= 0;
 					}
@@ -337,7 +328,6 @@ public class Display {
 						selectedPiece = null;
 						// Clear possible board locations
 						possibleBoardLocations = 0;
-						needsRelayout = true;
 					}
 				}
 
@@ -357,7 +347,6 @@ public class Display {
 						deltaPos.set(e.getX() - width / 2,
 								e.getY() - height / 2).subtract(mousePosition);
 						mousePosition.add(deltaPos);
-						selectedPiece.setTransition(1);
 						selectedPiece.getTarget().add(deltaPos);
 						selectedToGrid = selectedPiece.getPosition().length() < bankRadius;
 					}
@@ -452,38 +441,33 @@ public class Display {
 			for (int i = 0; i < player.getGrid().getHeight(); i++) {
 				for (int j = 0; j < player.getGrid().getWidth(); j++) {
 					if (player.getGrid().isOccupied(i, j)) {
-						if (needsRelayout) {
-							PuzzlePieceImage piece = (PuzzlePieceImage) player
-									.getGrid().getCell(i, j);
-							piece.setTransition(0);
-							piece.getSource().copy(piece.getPosition());
+						PuzzlePieceImage piece = (PuzzlePieceImage) player
+								.getGrid().getCell(i, j);
+						if (selectedPiece != piece) {
 							relayout(piece.getTarget(), i + 3 * j);
 						}
 					}
 				}
 			}
+			boolean selectedAlreadySeen = false;
 			for (int i = 0; i < player.get$Bank().length; i++) {
 				if (player.get$Bank()[i] != null) {
-					if (needsRelayout) {
-						PuzzlePieceImage piece = (PuzzlePieceImage) player
-								.get$Bank()[i];
-						piece.setTransition(0);
-						piece.getSource().copy(piece.getPosition());
-						relayout(piece.getTarget(), i, player.get$Bank().length);
+					PuzzlePieceImage piece = (PuzzlePieceImage) player
+							.get$Bank()[i];
+					if (selectedPiece != piece) {
+						relayout(piece.getTarget(), i
+								+ (selectedToGrid && selectedAlreadySeen ? -1
+										: 0), player.get$Bank().length);
+					} else {
+						selectedAlreadySeen = true;
 					}
 				}
 			}
-			needsRelayout = false;
 			// Animation
 			for (int i = 0; i < pieces.length; i++) {
 				PuzzlePieceImage piece = (PuzzlePieceImage) pieces[i];
-				if (piece.getTransition() < 1) {
-					piece.setTransition(Math.min(piece.getTransition()
-							+ timeElapsed / transitionDuration, 1));
-					double scaled = 1.0 - Math.pow(0.2,
-							10 * piece.getTransition());
-					piece.getPosition().copy(piece.getSource())
-							.lerp(piece.getTarget(), scaled);
+				if (piece != selectedPiece) {
+					piece.getPosition().lerp(piece.getTarget(), 0.03);
 				} else {
 					piece.getPosition().copy(piece.getTarget());
 				}
@@ -560,8 +544,12 @@ public class Display {
 			if (vector == null) {
 				return;
 			}
-			vector.set(0, -bankRadius - bankPadding).rotate(
-					-Math.PI * 2 * ((double) b / length));
+			vector.set(bankRadius + bankPadding, 0).rotate(
+					-Math.PI
+							* 2
+							* ((double) (b + 1))
+							/ ((selectedPiece != null && selectedToGrid ? -1
+									: 0) + length));
 		}
 	}
 

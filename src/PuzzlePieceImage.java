@@ -66,55 +66,18 @@ public class PuzzlePieceImage extends PuzzlePiece {
 	public Vector2 getPosition() {
 		return position;
 	}
+	public Vector2 getTarget() {
+		return target;
+	}
 
 	public BufferedImage getImage() {
 		return image;
 	}
 
-	public Vector2 getTarget() {
-		return target;
-	}
-
-	public void setTarget(Vector2 target) {
-		this.target = target;
-	}
-
-	/**
-	 * @return the transition
-	 */
-	public double getTransition() {
-		return transition;
-	}
-
-	/**
-	 * @param transition
-	 *            the transition to set
-	 */
-	public void setTransition(double transition) {
-		this.transition = transition;
-	}
-
-	/**
-	 * @return the source
-	 */
-	public Vector2 getSource() {
-		return source;
-	}
-
-	/**
-	 * @param source
-	 *            the source to set
-	 */
-	public void setSource(Vector2 source) {
-		this.source = source;
-	}
-
 	private double visualRotation;
 	private Vector2 position;
+	private Vector2 target=new Vector2();
 	private BufferedImage image;
 	private BufferedImage originalImage;
-	private Vector2 source = new Vector2();
-	private Vector2 target = new Vector2();
-	private double transition = 0;
 
 }
