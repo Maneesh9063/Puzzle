@@ -337,6 +337,7 @@ public class Display {
 
 				@Override
 				public void mouseExited(MouseEvent e) {
+					mouseReleased(e);
 				}
 
 			});
